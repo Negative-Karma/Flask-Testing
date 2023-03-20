@@ -1,0 +1,135 @@
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="tabs">
+    <div class="tabs__sidebar">
+        <div class="tabs__button tabs__button--active" data-for-tab="rain">Rain</div>
+        <div class="tabs__button" data-for-tab="temperature">Temperature</div>
+        <div class="tabs__button" data-for-tab="air">Air</div>
+    </div>
+
+    <div class="tabs__content tabs__content--active" data-id="rain">
+        <canvas id="myChart"></canvas>
+        {% block javascript %}
+        
+        <script>
+            const ctx = document.getElementById('myChart');
+            labels = JSON.parse('{{ labels | tojson }}')
+            data = JSON.parse('{{ data | tojson }}')
+            new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                // label: labels,
+                data: data,
+                borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                y: {
+                    beginAtZero: true
+                }
+                }
+            }
+            });
+        </script>
+
+        {% endblock %} 
+        
+    </div>
+    <div class="tabs__content" data-id="temperature">
+        <h3>Temperature Display</h3>
+        <p>display temperature chart here using data</p>
+    </div>
+    <div class="tabs__content" data-id="air">
+        <h3>Air Display</h3>
+        <p>display air quality? chart here using data</p>
+    </div>
+
+
+    <script>
+        function setupTabs () {
+            document.querySelectorAll(".tabs__button").forEach(button => {
+                button.addEventListener("click", () => {
+                const sideBar = button.parentElement;
+                const tabsContainer = sideBar.parentElement;
+                const tabNumber = button.dataset.forTab;
+                const tabToActivate = tabsContainer.querySelector(`.tabs__content[data-id="${tabNumber}"]`);
+                
+                
+
+                sideBar.querySelectorAll(".tabs__button").forEach(button => {
+                    button.classList.remove("tabs__button--active");
+                });
+
+
+                tabsContainer.querySelectorAll(".tabs__content").forEach(tab => {
+                    tab.classList.remove("tabs__content--active");
+                });
+                
+                button.classList.add("tabs__button--active");
+                
+                tabToActivate.classList.add("tabs__content--active");
+
+            });
+        })
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        setupTabs();
+    })
+    </script>
+
+</div>
+
+<style>
+    .tabs {
+        display: flex;
+    }
+    .tabs__sidebar {
+        width: 125px;
+        flex-shrink: 0;
+        background: rgb(214, 212, 212);
+    }
+    .tabs__button {
+        display: block;
+        padding: 10px;
+        background: #eeeeee;
+        border: none;
+        width: 100%;
+        outline: none;
+        cursor: pointer;
+    }
+    .tabs__button:active {
+        background: #cccccc;
+    }
+    .tabs__button:not(:last-of-type) {
+        border-bottom: 1px solid #cccccc;
+    }
+    .tabs__button--active {
+        display: block;
+        background: #cccccc
+    }
+    .tabs__content {
+        padding: 15px;
+        font-size: 0.8rem;
+        display: none;
+        width: 85%;
+        max-width: 60em;
+        margin-left: 20px;
+    }
+    .tabs__content--active {
+        display: block;
+        background: #cccccc
+    }
+    .tabs__content > :first-child {
+        margin-top: 0;
+    }
+</style>
+
+</body>
+
+
